@@ -1,43 +1,66 @@
-exports.JsObject = function JsObject() {
+var util = require("util");
+
+function JsObject() {
   this.properties = {};
 }
 
-exports.JsString = function JsString(value) {
+exports.JsObject = JsObject;
+
+
+// String
+function JsString(value) {
+  JsObject.call(this);
   this.value = value;
 }
 
-exports.JsFunction = function JsFunction(body) {
-  exports.JsObject.call(this);
+util.inherits(JsString, JsObject);
+exports.JsString = JsString;
+
+
+// Function
+function JsFunction(body, parameters) {
+  JsObject.call(this);
   this.body = body;
+  this.parameters = parameters;
 }
 
-exports.JsFunction.prototype = Object.create(exports.JsObject.prototype);
-exports.JsFunction.prototype.constructor = exports.JsFunction;
+util.inherits(JsFunction, JsObject);
+exports.JsFunction = JsFunction;
 
-exports.JsFunction.prototype.call = function(_this, scope, args) {
-  this.body.eval(scope);
+JsFunction.prototype.call = function(_this, scope, args) {
+  var functionScope = new JsScope(_this, scope);
+
+  for (var i = 0; i < this.parameters.length; i++) {
+    functionScope.locals[this.parameters[i]] = args[i];
+  }
+
+  this.body.eval(functionScope);
 }
 
-exports.JsScope = function JsScope(_this, parent) {
+
+//Scope
+function JsScope(_this, parent) {
   this._this = _this;
   this.parent = parent;
   this.locals = this.properties = {};
 }
 
-exports.JsScope.prototype.get = function(name) {
+exports.JsScope = JsScope;
+
+JsScope.prototype.get = function(name) {
   if (this.locals.hasOwnProperty(name)) return this.locals[name];
   if (this.parent) return this.parent.get(name);
 }
 
 
 // Bootstrap the root objects.
-var root = exports.root = new exports.JsScope();
+var root = exports.root = new JsScope();
 root._this = root;
 
 root.locals['root'] = root;
-root.locals['Object'] = new exports.JsObject();
+root.locals['Object'] = new JsObject();
 
-root.locals['console'] = new exports.JsObject();
+root.locals['console'] = new JsObject();
 root.locals['console'].properties['log'] = function(scope, args) {
   console.log(args[0].value);
 }

@@ -76,8 +76,3 @@ parameters:
 | parameters "," IDENTIFIER    { $1.push($3); $$ = $1 }
 |                              { $$ = []; }
 ;
-
-return:
-  RETURN                       { $$ = new yy.ReturnNode(); }
-| RETURN expression            { $$ = new yy.ReturnNode($2); }
-;

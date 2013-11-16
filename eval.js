@@ -2,14 +2,9 @@ var nodes = require('./nodes');
 var runtime = require('./runtime');
 
 nodes.BlockNode.prototype.eval = function(scope) {
-  try {
-    this.nodes.forEach(function(node) {
-      node.eval(scope);
-    });
-  } catch (e) {
-    if (e instanceof Return) return e.value;
-    throw e;
-  }
+  this.nodes.forEach(function(node) {
+    node.eval(scope);
+  });
 }
 
 nodes.StringNode.prototype.eval = function(scope) {
@@ -45,26 +40,11 @@ nodes.SetPropertyNode.prototype.eval = function(scope) {
 nodes.CallNode.prototype.eval = function(scope) {
   var evaledObject = this.object ? this.object.eval(scope) : runtime.root;
   var evaledArguments = this.arguments.map(function(arg) { return arg.eval(scope) });
-  var functionScope = new runtime.JsScope(evaledObject, scope);
   var property = evaledObject.properties[this.name];
 
-  return property.call(evaledObject, functionScope, evaledArguments);
+  return property.call(evaledObject, scope, evaledArguments);
 }
 
 nodes.FunctionNode.prototype.eval = function(scope) {
-  return new runtime.JsFunction(this.body);
-}
-
-
-function Return(value) {
-  this.value = value;
-}
-
-nodes.ReturnNode.prototype.eval = function(scope) {
-  var value = this.value;
-
-  if (value)
-    throw new Return(value.eval(scope));
-  else
-    throw new Return();
+  return new runtime.JsFunction(this.body, this.parameters);
 }

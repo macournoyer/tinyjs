@@ -1,5 +1,9 @@
 %start program  /* optional */
 
+%{
+  var nodes = require('./nodes');
+%}
+
 %left ","
 %right "="
 %nonassoc "(" ")"
@@ -12,15 +16,14 @@ program:
 ;
 
 statements:
-  statement                   { $$ = new yy.BlockNode([ $1 ]); }
+  statement                   { $$ = new nodes.BlockNode([ $1 ]); }
 | statements ";" statement    { $1.push($3); $$ = $1; }
 | statements ";"              { $$ = $1; }
-|                             { $$ = new yy.BlockNode([]); }
+|                             { $$ = new nodes.BlockNode([]); }
 ;
 
 statement:
   expression
-| return
 ;
 
 // Expressions can return a value
@@ -34,30 +37,32 @@ expression:
 ;
 
 literal:
-  NUMBER                       { $$ = new yy.NumberNode(parseInt($1)); }
-| STRING                       { $$ = new yy.StringNode($1.substring(1, $1.length-1)); }
-| THIS                         { $$ = new yy.ThisNode(); }
-| TRUE                         { $$ = new yy.TrueNode(); }
-| FALSE                        { $$ = new yy.FalseNode(); }
-| NULL                         { $$ = new yy.NullNode(); }
-| UNDEFINED                    { $$ = new yy.UndefinedNode(); }
-| "{" "}"                      { $$ = new yy.ObjectNode(); }
+  NUMBER                       { $$ = new nodes.NumberNode(parseInt($1)); }
+| STRING                       { $$ = new nodes.StringNode($1.substring(1, $1.length-1)); }
+| THIS                         { $$ = new nodes.ThisNode(); }
+| TRUE                         { $$ = new nodes.TrueNode(); }
+| FALSE                        { $$ = new nodes.FalseNode(); }
+| NULL                         { $$ = new nodes.NullNode(); }
+| UNDEFINED                    { $$ = new nodes.UndefinedNode(); }
+| "{" "}"                      { $$ = new nodes.ObjectNode(); }
 ;
 
 variable:
-  IDENTIFIER                   { $$ = new yy.GetVariableNode($1); }
-| IDENTIFIER "=" expression    { $$ = new yy.SetVariableNode($1, $3); }
+  IDENTIFIER                    { $$ = new nodes.GetVariableNode($1); }
+| IDENTIFIER "=" expression     { $$ = new nodes.SetVariableNode($1, $3); }
+| VAR IDENTIFIER "=" expression { $$ = new nodes.DeclareVariableNode($2, $4); }
+| VAR IDENTIFIER                { $$ = new nodes.DeclareVariableNode($2); }
 ;
 
 property:
-  expression "." IDENTIFIER    { $$ = new yy.GetPropertyNode($1, $3); }
+  expression "." IDENTIFIER    { $$ = new nodes.GetPropertyNode($1, $3); }
 | expression "." IDENTIFIER
-    "=" expression             { $$ = new yy.SetPropertyNode($1, $3, $5); }
+    "=" expression             { $$ = new nodes.SetPropertyNode($1, $3, $5); }
 ;
 
 call:
-  IDENTIFIER "(" arguments ")" { $$ = new yy.CallNode(null, $1, $3); }
-| expression "." IDENTIFIER "(" arguments ")" { $$ = new yy.CallNode($1, $3, $5); }
+  IDENTIFIER "(" arguments ")" { $$ = new nodes.CallNode(null, $1, $3); }
+| expression "." IDENTIFIER "(" arguments ")" { $$ = new nodes.CallNode($1, $3, $5); }
 ;
 
 arguments:
@@ -68,7 +73,7 @@ arguments:
 
 function:
   FUNCTION "(" parameters ")" "{" statements "}"
-                               { $$ = new yy.FunctionNode($3, $6) }
+                               { $$ = new nodes.FunctionNode($3, $6) }
 ;
 
 parameters:

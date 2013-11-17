@@ -23,6 +23,10 @@ exports.SetVariableNode = function SetVariableNode(name, value) {
   this.name = name;
   this.value = value;
 }
+exports.DeclareVariableNode = function SetVariableNode(name, value) {
+  this.name = name;
+  this.value = value;
+}
 
 exports.GetPropertyNode = function GetPropertyNode(object, name) {
   this.object = object;

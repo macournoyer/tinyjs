@@ -9,6 +9,7 @@
 
 // Keywords
 "function"            return 'FUNCTION';
+"var"                 return 'VAR'
 "return"              return 'RETURN';
 "this"                return 'THIS';
 "true"                return 'TRUE';

@@ -1,3 +1,3 @@
-f = function(x) { console.log(x) };
+f = function(x, y) { console.log(x, y); };
 
-f("ok"); // => "ok"
+f("ok", 1); // => "ok"

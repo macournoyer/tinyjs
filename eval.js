@@ -8,7 +8,6 @@ nodes.BlockNode.prototype.eval = function(scope) {
 }
 
 // Literals
-
 nodes.ThisNode.prototype.eval = function(scope) { return scope.this; }
 nodes.TrueNode.prototype.eval = function(scope) { return runtime.true; }
 nodes.FalseNode.prototype.eval = function(scope) { return runtime.false; }
@@ -41,7 +40,7 @@ nodes.SetVariableNode.prototype.eval = function(scope) {
 }
 
 nodes.DeclareVariableNode.prototype.eval = function(scope) {
-  return scope.locals[this.name] = this.value ? this.value.eval(scope) : runtime.undefined;
+  return scope.setLocal(this.name, this.value ? this.value.eval(scope) : runtime.undefined);
 }
 
 

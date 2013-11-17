@@ -13,7 +13,7 @@ f1 = function(x) {
 
     top = "top overriden from function";
     console.log(top);
-    global = "global from function";
+    global = "global defined from function";
 
     f1Var = "f1Var modified from f2";
   };

@@ -7,14 +7,15 @@
 %}
 
 // ## The operator precedence table.
-// Normally, this is where you'd defined all the operators in the language.
+// We only define a few operators. But normally, this is where you'd defined all the
+// operators in the language.
 %left ","
 %right "="
 %nonassoc "(" ")"
 %left "."
 
 // ## Defining the rules
-// This is where all we defined all the parsing rules.
+// This is where we define all the parsing rules.
 // The format is as follow: `ruleName: TOKEN orOtherRule | OTHER_TOKEN | ... ;`
 // What we put in the `{ }` is what needs to be executed when the rule matches.
 // We must assign to `$$` the node created by the rule.
@@ -67,6 +68,10 @@ literal:
 | UNDEFINED                    { $$ = new nodes.UndefinedNode(); }
 | "{" "}"                      { $$ = new nodes.ObjectNode(); }
 ;
+
+// And on and on we define the rest of our language ...
+// Keep in mind this grammar only handles a subset of the JavaScript language and is
+// intended to be as simple as possible and easy to understand.
 
 variableDeclaration:
   VAR IDENTIFIER "=" expression { $$ = new nodes.DeclareVariableNode($2, $4); }

@@ -7,4 +7,7 @@ test: parser.js
 loc: tokens.jisonlex grammar.jison nodes.js eval.js runtime.js tiny
 	@egrep -v "^[[:space:]]*(\/\/.*)?$$" $^ | wc -l
 
+doc: tokens.jisonlex grammar.jison nodes.js eval.js runtime.js tiny
+	docco -l linear -e .js $^
+
 .PHONY: test loc

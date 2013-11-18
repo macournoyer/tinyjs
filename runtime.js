@@ -42,7 +42,7 @@ function JsString(value) {
 util.inherits(JsString, JsObject);
 exports.JsString = JsString;
 
-// Numbers are not objects.
+// Numbers are not objects, they only wrap a JavaScript number value.
 function JsNumber(value) {
   this.value = value;
 }
@@ -56,12 +56,10 @@ exports.JsNumber = JsNumber;
 // A scope encapsulates the context of execution: the local variables and the value of `this`.
 // Scopes also have a parent scope. The chain of parents will go down to the root scope,
 // where you define your global variables.
-// 
-// If you're 2 levels deep inside functions, you'll have something like:
-// `global scope -> function1 scope -> function2 scope`.
 function JsScope(_this, parent) {
   this.this = _this;
   this.parent = parent;
+  this.root = !parent;
   this.locals = {};
 }
 exports.JsScope = JsScope;
@@ -74,8 +72,8 @@ JsScope.prototype.hasLocal = function(name) {
 // in the parent until we reach the root scope.
 // This is how we get access to variables defined in parent functions.
 JsScope.prototype.get = function(name) {
-  if (this.hasLocal(name)) return this.locals[name];
-  if (this.parent) return this.parent.get(name);
+  if (this.hasLocal(name)) return this.locals[name]; // Look in current scope
+  if (this.parent) return this.parent.get(name); // Look in parent scope
 }
 
 // Setting the value of a variables follows the same logic as when getting it's value.
@@ -83,14 +81,14 @@ JsScope.prototype.get = function(name) {
 // was not defined in any parent scope, we'll end up in the root scope, which will have
 // the effect as declaring it as a global variable.
 //
-// Because of this behaviour, `set` can't be used for declaring local variable, we'll
+// Because of this behaviour, `set` can't be used for declaring local variables, we'll
 // use `scope.locals[name] = value` for that.
 //
 // This is why, in JavaScript, if you assign a value to a variable without declaring it
-// (using `var`) first, it will search parent scope until it reaches the global scope and
-// declare it as a global variable.
+// (using `var`) first, it will search in parent scopes until it reaches the root scope and
+// declare it there, thus declaring it as a global variable.
 JsScope.prototype.set = function(name, value) {
-  if (this.hasLocal(name) || !this.parent) return this.locals[name] = value;
+  if (this.root || this.hasLocal(name)) return this.locals[name] = value;
   return this.parent.set(name, value);
 }
 

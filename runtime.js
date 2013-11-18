@@ -33,7 +33,6 @@ JsObject.prototype.set = function(name, value) {
   return this.properties[name] = value;
 }
 
-
 // Strings are objects, but they wrap a real JavaScript string.
 function JsString(value) {
   JsObject.call(this);
@@ -47,6 +46,7 @@ function JsNumber(value) {
   this.value = value;
 }
 exports.JsNumber = JsNumber;
+
 
 // ## Scopes
 // The most controversial and confusing part of JavaScript is the way it handles scopes.
@@ -80,19 +80,20 @@ JsScope.prototype.get = function(name) {
 // the effect as declaring it as a global variable.
 //
 // Because of this behaviour, `set` can't be used for declaring local variable, we'll
-// use `setLocal` for that.
+// use `scope.locals[name] = value` for that.
+//
+// This is why, in JavaScript, if you assign a value to a variable without declaring it
+// (using `var`) first, it will search parent scope until it reaches the global scope and
+// declare it as a global variable.
 JsScope.prototype.set = function(name, value) {
-  if (!this.parent || this.hasLocal(name)) return this.locals[name] = value;
+  if (this.hasLocal(name) || !this.parent) return this.locals[name] = value;
   return this.parent.set(name, value);
 }
 
-JsScope.prototype.setLocal = function(name, value) {
-  return this.locals[name] = value;
-}
 
-
-// Functions encapsulate a body that we can eval (execute) and parameters:
-// `function (parameters) { body }`
+// ## Function
+// Functions encapsulate a body that we can execute (eval) and parameters:
+// `function (parameters) { body }`.
 function JsFunction(body, parameters) {
   JsObject.call(this);
   this.body = body;
@@ -101,9 +102,18 @@ function JsFunction(body, parameters) {
 util.inherits(JsFunction, JsObject);
 exports.JsFunction = JsFunction;
 
-JsFunction.prototype.call = function(_this, scope, args) {
-  var functionScope = new JsScope(_this, scope);
+// When the function is called, a new scope is created so that the function will have its
+// own set of local variables and its own value for `this`.
+//
+// The function's body is a tree of nodes.
+// - nodes.js defines those nodes.
+// - eval.js defines how each node is evaluated.
+//
+// To evaluate (execute) a tree of node, we simply call the `eval` method on the top of the tree.
+JsFunction.prototype.call = function(object, scope, args) {
+  var functionScope = new JsScope(object, scope); // this = object, parent scope = scope
 
+  // We assign passed arguments (args) to local variables.
   for (var i = 0; i < this.parameters.length; i++) {
     functionScope.locals[this.parameters[i]] = args[i];
   }
@@ -112,14 +122,18 @@ JsFunction.prototype.call = function(_this, scope, args) {
 }
 
 
-// Bootstrap the root object.
+// ## The root object
+// The only missing piece of the runtime at this point is the root (global) object.
+// We create it as a scope that also acts as an object (has properties).
 var root = exports.root = new JsScope();
-root.this = root;
-// Properties of the root/global scope are the local variables.
+root.this = root; // this == root when in root scope.
+
+// Properties of the root/global scope are also the local variables. That's why when you
+// use `var a = 1;` in the root scope, it will also assign the value to `root.a`.
 root.properties = root.locals;
 
-// Here we'd normaly define all the things you can access to inside the runtime.
-// But we'll keep it simple and only define root and the console.log function.
+// Here we'd normaly define all the fancy things you can access to inside the runtime.
+// But we'll keep it simple and only define `root` and the `console.log` function.
 root.locals['root'] = root;
 
 root.locals['console'] = new JsObject();

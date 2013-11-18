@@ -4,7 +4,7 @@ parser.js: grammar.jison tokens.jisonlex
 test: tests/*.js
 	@for f in $^; do sh test.sh $$f; done
 
-loc: tokens.jisonlex grammar.jison nodes.js eval.js runtime.js tiny.js
+loc: tokens.jisonlex grammar.jison nodes.js eval.js runtime.js tiny
 	@egrep -v "^[[:space:]]*(\/\/.*)?$$" $^ | wc -l
 
 .PHONY: test loc

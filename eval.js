@@ -40,7 +40,7 @@ nodes.SetVariableNode.prototype.eval = function(scope) {
 }
 
 nodes.DeclareVariableNode.prototype.eval = function(scope) {
-  return scope.setLocal(this.name, this.value ? this.value.eval(scope) : runtime.undefined);
+  return scope.locals[this.name] = this.value ? this.value.eval(scope) : runtime.undefined;
 }
 
 

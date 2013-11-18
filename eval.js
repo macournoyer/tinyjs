@@ -1,3 +1,10 @@
+// # The Interpreter
+// The interpreter part of our language is where we'll evaluate the nodes to execute the program.
+// Thus the name `eval` for the function we'll be defining here.
+//
+// We'll add an `eval` function to each node produced by the parser. Each node will know how to
+// evaluate itself. For example, a `StringNode` will know how to turn itself into a real string
+// inside our program.
 var nodes = require('./nodes');
 var runtime = require('./runtime');
 

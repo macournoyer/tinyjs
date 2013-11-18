@@ -1,3 +1,7 @@
+// # The Tokens
+// The tokens are the atomic units of our programs. We tag each one with a type.
+// This stream of tokens will then be fed to the parser.
+
 %%
 
 \s+                   /* skip whitespace */
@@ -10,7 +14,6 @@
 // Keywords
 "function"            return 'FUNCTION';
 "var"                 return 'VAR'
-"return"              return 'RETURN';
 "this"                return 'THIS';
 "true"                return 'TRUE';
 "false"               return 'FALSE';
@@ -19,7 +22,8 @@
 
 [a-zA-Z_]\w*          return 'IDENTIFIER';
 
-// Catch all
-.                     return yytext;
-
 <<EOF>>               return 'EOF';
+
+// We end with a catch all rule. Any one single character that has not been matched
+// will be handled here. A few examples: `.`, `+`, `(` and `)`.
+.                     return yytext;

@@ -1,4 +1,4 @@
-// Define all the node constructors we'll be using.
+// Define all the nodes we'll be using.
 
 exports.BlockNode = function BlockNode(nodes) {
   this.nodes = nodes;

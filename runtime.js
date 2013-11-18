@@ -3,14 +3,15 @@
 // We need to build representations for primitive and objects we'll have access to inside
 // the language.
 //
-// Our runtime will be a simplified version of the real JavaScript runtime.
+// Our runtime will be a simplified version of the real JavaScript runtime. But it will behave
+// very close to the original, while being less than 70 lines of code.
 
 var util = require("util");
 
 
 // ## Primitives
-// Normally true and false are objects.
-// We map the primitives to their JavaScript conteirpart (in their `value` attribute).
+// We map the primitives to their JavaScript conteirpart (in their `value` property).
+// Note that, normally, true and false would be objects.
 exports.true = { value: true };
 exports.false = { value: false };
 exports.null = { value: null };
@@ -18,14 +19,14 @@ exports.undefined = { value: undefined };
 
 
 // ## Object
-// Objects have properties. One missing piece here is the prototype. To keep things simple here,
+// Objects have properties. One missing piece here is the prototype. To keep things simple,
 // we will not have any form of inheritance.
 function JsObject() {
   this.properties = {};
 }
 exports.JsObject = JsObject;
 
-// The only thing we can do on objects, is get and set properties.
+// The only things we can do on objects, are get and set properties.
 JsObject.prototype.get = function(name) {
   return this.properties[name];
 }
@@ -33,7 +34,7 @@ JsObject.prototype.set = function(name, value) {
   return this.properties[name] = value;
 }
 
-// Strings are objects, but they wrap a real JavaScript string.
+// Strings are objects, and they wrap a real JavaScript string (in `value`).
 function JsString(value) {
   JsObject.call(this);
   this.value = value;
@@ -52,9 +53,12 @@ exports.JsNumber = JsNumber;
 // The most controversial and confusing part of JavaScript is the way it handles scopes.
 // But surprisingly, it can be implemented in a very simple and straightforward fashion.
 //
-// The scope encapsulates the context of execution: the local variables and the value of `this`.
+// A scope encapsulates the context of execution: the local variables and the value of `this`.
 // Scopes also have a parent scope. The chain of parents will go down to the root scope,
 // where you define your global variables.
+// 
+// If you're 2 levels deep inside functions, you'll have something like:
+// `global scope -> function1 scope -> function2 scope`.
 function JsScope(_this, parent) {
   this.this = _this;
   this.parent = parent;

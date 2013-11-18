@@ -46,7 +46,8 @@ statement:
 | variableDeclaration 
 ;
 
-// Expressions, as opposed to statements, return a value.
+// Expressions, as opposed to statements, return a value and can be nested inside
+// other expressions or statements.
 expression:
   literal
 | variable

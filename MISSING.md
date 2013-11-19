@@ -1,5 +1,6 @@
 # Things not support by tiny.js
-- Operators: +, -, /, etc
+- Operators: ==, ===, +, -, /, etc.
 - if, while, for
 - Named functions
 - Declaration hoisting
+- Everything else ...

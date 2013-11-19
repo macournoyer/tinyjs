@@ -5,8 +5,16 @@
 // We'll add an `eval` function to each node produced by the parser. Each node will know how to
 // evaluate itself. For example, a `StringNode` will know how to turn itself into a real string
 // inside our program.
+//
+// One thing our interpreter does not support is variable declaration hoisting. In JavaScript,
+// variable declarations are moved (hoisted) invisibly to the top of their scope. This would
+// require two passes in the node tree by the interpreter, a first one for declaring and one
+// for evaling.
+
 var nodes = require('./nodes');
 var runtime = require('./runtime');
+
+// The top node of a tree of nodes will always be of type BlockNode. To spread the 
 
 nodes.BlockNode.prototype.eval = function(scope) {
   this.nodes.forEach(function(node) {
@@ -14,27 +22,24 @@ nodes.BlockNode.prototype.eval = function(scope) {
   });
 }
 
-// Literals
-nodes.ThisNode.prototype.eval = function(scope) { return scope.this; }
-nodes.TrueNode.prototype.eval = function(scope) { return runtime.true; }
-nodes.FalseNode.prototype.eval = function(scope) { return runtime.false; }
-nodes.NullNode.prototype.eval = function(scope) { return runtime.null; }
+// Literals are pretty easy to eval. Simply return the runtime value.
+nodes.ThisNode.prototype.eval      = function(scope) { return scope.this; }
+nodes.TrueNode.prototype.eval      = function(scope) { return runtime.true; }
+nodes.FalseNode.prototype.eval     = function(scope) { return runtime.false; }
+nodes.NullNode.prototype.eval      = function(scope) { return runtime.null; }
 nodes.UndefinedNode.prototype.eval = function(scope) { return runtime.undefined; }
 
-nodes.StringNode.prototype.eval = function(scope) {
-  return new runtime.JsString(this.value);
+nodes.StringNode.prototype.eval = function(scope) { return new runtime.JsString(this.value); }
+nodes.NumberNode.prototype.eval = function(scope) { return new runtime.JsNumber(this.value); }
+nodes.ObjectNode.prototype.eval = function(scope) { return new runtime.JsObject(); }
+
+
+// Variables are stored in the scope. All we need to do to interpret the variable nodes is
+// get and set values in the scope.
+
+nodes.DeclareVariableNode.prototype.eval = function(scope) {
+  return scope.locals[this.name] = this.valueNode ? this.valueNode.eval(scope) : runtime.undefined;
 }
-
-nodes.NumberNode.prototype.eval = function(scope) {
-  return new runtime.JsNumber(this.value);
-}
-
-nodes.ObjectNode.prototype.eval = function(scope) {
-  return new runtime.JsObject();
-}
-
-
-// Variables
 
 nodes.GetVariableNode.prototype.eval = function(scope) {
   var value = scope.get(this.name);
@@ -43,37 +48,38 @@ nodes.GetVariableNode.prototype.eval = function(scope) {
 }
 
 nodes.SetVariableNode.prototype.eval = function(scope) {
-  return scope.set(this.name, this.value.eval(scope));
-}
-
-nodes.DeclareVariableNode.prototype.eval = function(scope) {
-  return scope.locals[this.name] = this.value ? this.value.eval(scope) : runtime.undefined;
+  return scope.set(this.name, this.valueNode.eval(scope));
 }
 
 
-// Properties
+// Getting and setting properties is handled by the two following nodes.
 
 nodes.GetPropertyNode.prototype.eval = function(scope) {
-  return this.object.eval(scope).get(this.name) || runtime.undefined;
+  return this.objectNode.eval(scope).get(this.name) || runtime.undefined;
 }
 
 nodes.SetPropertyNode.prototype.eval = function(scope) {
-  return this.object.eval(scope).set(this.name, this.value.eval(scope));
+  return this.objectNode.eval(scope).set(this.name, this.valueNode.eval(scope));
 }
 
 
-// Functions
+// Finally, creating and calling functions.
+
+nodes.FunctionNode.prototype.eval = function(scope) {
+  return new runtime.JsFunction(this.bodyNode, this.parameters);
+}
 
 nodes.CallNode.prototype.eval = function(scope) {
-  var receiver = this.object ? this.object.eval(scope) : scope;
-  var evaledArguments = this.arguments.map(function(arg) { return arg.eval(scope) });
-  var property = receiver.get(this.name);
+  if (this.objectNode) { // object.name(...)
+    var object = this.objectNode.eval(scope);
+    var property = object.get(this.name);
+  } else { // name()
+    var object = runtime.root;
+    var property = scope.get(this.name);
+  }
+  var args = this.argumentNodes.map(function(arg) { return arg.eval(scope) });
 
   if (!property || !property.call) throw this.name + " is not a function";
 
-  return property.call(receiver, scope, evaledArguments) || runtime.undefined;
-}
-
-nodes.FunctionNode.prototype.eval = function(scope) {
-  return new runtime.JsFunction(this.body, this.parameters);
+  return property.call(object, scope, args) || runtime.undefined;
 }

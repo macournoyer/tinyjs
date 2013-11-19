@@ -137,8 +137,10 @@ root.properties = root.locals;
 // Here we'd normaly define all the fancy things you can access to inside the runtime.
 // But we'll keep it simple and only define `root` and the `console.log` function.
 root.locals['root'] = root;
-
 root.locals['console'] = new JsObject();
+
+// We can store real JavaScript functions in our runtime object since they have a `call`
+// property, like `JsFunction.prototype.call`.
 root.locals['console'].properties['log'] = function(scope, args) {
   console.log.apply(console, args.map(function(arg) { return arg.value }));
 }

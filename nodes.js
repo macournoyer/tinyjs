@@ -1,4 +1,4 @@
-// Define all the nodes we'll be using.
+// Define all the nodes produced by the parser.
 
 exports.BlockNode = function BlockNode(nodes) {
   this.nodes = nodes;
@@ -19,34 +19,32 @@ exports.UndefinedNode = function UndefinedNode() {}
 exports.ObjectNode = function ObjectNode() {}
 
 exports.GetVariableNode = function GetVariableNode(name) { this.name = name; }
-exports.SetVariableNode = function SetVariableNode(name, value) {
+exports.SetVariableNode = function SetVariableNode(name, valueNode) {
   this.name = name;
-  this.value = value;
+  this.valueNode = valueNode;
 }
-exports.DeclareVariableNode = function SetVariableNode(name, value) {
+exports.DeclareVariableNode = function SetVariableNode(name, valueNode) {
   this.name = name;
-  this.value = value;
-}
-
-exports.GetPropertyNode = function GetPropertyNode(object, name) {
-  this.object = object;
-  this.name = name;
-}
-exports.SetPropertyNode = function SetPropertyNode(object, name, value) {
-  this.object = object;
-  this.name = name;
-  this.value = value;
+  this.valueNode = valueNode;
 }
 
-exports.CallNode = function CallNode(object, name, arguments) {
-  this.object = object;
+exports.GetPropertyNode = function GetPropertyNode(objectNode, name) {
+  this.objectNode = objectNode;
   this.name = name;
-  this.arguments = arguments;
+}
+exports.SetPropertyNode = function SetPropertyNode(objectNode, name, valueNode) {
+  this.objectNode = objectNode;
+  this.name = name;
+  this.valueNode = valueNode;
 }
 
-exports.FunctionNode = function FunctionNode(parameters, body) {
+exports.CallNode = function CallNode(objectNode, name, argumentNodes) {
+  this.objectNode = objectNode;
+  this.name = name;
+  this.argumentNodes = argumentNodes;
+}
+
+exports.FunctionNode = function FunctionNode(parameters, bodyNode) {
   this.parameters = parameters;
-  this.body = body;
+  this.bodyNode = bodyNode;
 }
-
-exports.ReturnNode = function ReturnNode(value) { this.value = value; }

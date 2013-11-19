@@ -1,8 +1,11 @@
 // Create an object
 a = {};
-a.x = "ok";
+a.x = "object";
+x = "global";
 
 // Create a function referencing x property
-a.f = function() { console.log(this.x) };
+f = function() { console.log(this.x) };
+a.f = f;
 
-a.f(); // => "ok"
+a.f(); // => "object"
+f(); // => "global"

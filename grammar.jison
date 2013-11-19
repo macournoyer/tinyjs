@@ -1,6 +1,10 @@
 // # The Parser's Grammar
+//
 // This grammar will be used to generate the parser (parser.js). It will turn the stream of
 // tokens (defined in tokens.jisonlex) into a tree of nodes (defined in nodes.js).
+//
+// Note that our parser will be a lot more loose than real JavaScript. Being more strict,
+// to catch errors at parse time, requires more rules and a more complex grammar.
 
 %{
   var nodes = require('./nodes');

@@ -16,11 +16,11 @@ f1 = function(x) {
     global = "global defined from function";
 
     f1Var = "f1Var modified from f2";
-  };
+  }
 
   f2();
   console.log(f1Var);
-};
+}
 
 f1("x");
 console.log(global);

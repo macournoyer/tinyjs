@@ -4,8 +4,10 @@
 
 %%
 
-\s+                   /* skip whitespace */
 "//".*                /* ignore comment */
+
+\n+                   return 'NEWLINE';
+\s+                   /* skip other whitespace */
 
 // Literals
 [0-9]+\b              return 'NUMBER';

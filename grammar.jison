@@ -40,10 +40,15 @@ program:
 //
 // We also need to handle edge cases, like trailing `;` and empty list of statements.
 statements:
-  statement                   { $$ = new nodes.BlockNode([ $1 ]); }
-| statements ";" statement    { $1.push($3); $$ = $1; }
-| statements ";"              { $$ = $1; }
-|                             { $$ = new nodes.BlockNode([]); }
+  statement                        { $$ = new nodes.BlockNode([ $1 ]); }
+| statements terminator statement  { $1.push($3); $$ = $1; }
+| statements terminator            { $$ = $1; }
+|                                  { $$ = new nodes.BlockNode([]); }
+;
+
+terminator:
+  ";"
+| NEWLINE
 ;
 
 statement:

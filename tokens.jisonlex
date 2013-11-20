@@ -4,14 +4,15 @@
 
 %%
 
-"//".*                /* ignore comment */
+"//".*                // ignore comment
 
 \n+                   return 'NEWLINE';
-\s+                   /* skip other whitespace */
+\s+                   // skip other whitespace
 
 // Literals
 [0-9]+\b              return 'NUMBER';
 \"[^"]*\"             return 'STRING';
+\'[^']*\'             return 'STRING';
 
 // Keywords
 "function"            return 'FUNCTION';

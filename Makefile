@@ -9,6 +9,6 @@ size: tokens.jisonlex grammar.jison nodes.js eval.js runtime.js tiny.js
 	@egrep -v "^[[:space:]]*(\/\/.*)?$$" $^ | wc -c -l
 
 doc: tokens.jisonlex grammar.jison nodes.js eval.js runtime.js tiny.js
-	docco -l linear -e .js $^
+	docco -e .js $^
 
 .PHONY: test size doc

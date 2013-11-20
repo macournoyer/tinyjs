@@ -1,6 +1,8 @@
 // # The Tokens
 // The tokens are the atomic units of our programs. We tag each one with a type.
 // This stream of tokens will then be fed to the parser.
+//
+// Note that the rules are applied from top to bottom, first one to match.
 
 %%
 
@@ -9,7 +11,7 @@
 \n+                   return 'NEWLINE';
 \s+                   // skip other whitespace
 
-// Literals
+// Literals: the hardcoded values in your programs.
 [0-9]+\b              return 'NUMBER';
 \"[^"]*\"             return 'STRING';
 \'[^']*\'             return 'STRING';
@@ -23,6 +25,7 @@
 "null"                return 'NULL';
 "undefined"           return 'UNDEFINED';
 
+// Identifiers are names: variable and function names.
 [a-zA-Z_]\w*          return 'IDENTIFIER';
 
 <<EOF>>               return 'EOF';

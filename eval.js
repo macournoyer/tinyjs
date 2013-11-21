@@ -25,6 +25,7 @@ nodes.BlockNode.prototype.eval = function(scope) {
 }
 
 // Literals are pretty easy to eval. Simply return the runtime value.
+
 nodes.ThisNode.prototype.eval      = function(scope) { return scope.this; }
 nodes.TrueNode.prototype.eval      = function(scope) { return runtime.true; }
 nodes.FalseNode.prototype.eval     = function(scope) { return runtime.false; }
@@ -32,6 +33,7 @@ nodes.NullNode.prototype.eval      = function(scope) { return runtime.null; }
 nodes.UndefinedNode.prototype.eval = function(scope) { return runtime.undefined; }
 
 // Creating various objects is done by instanciating `JsObject`.
+
 nodes.ObjectNode.prototype.eval = function(scope) { return new runtime.JsObject(); }
 nodes.StringNode.prototype.eval = function(scope) { return new runtime.JsObject(this.value); }
 nodes.NumberNode.prototype.eval = function(scope) { return new runtime.JsObject(this.value); }
@@ -71,31 +73,29 @@ nodes.SetPropertyNode.prototype.eval = function(scope) {
 }
 
 
-// Finally, creating and calling functions.
+// Creating a function is just a matter of instanciating `JsFunction`.
 
 nodes.FunctionNode.prototype.eval = function(scope) {
-  return new runtime.JsFunction(this.bodyNode, this.parameters);
+  return new runtime.JsFunction(this.parameters, this.bodyNode);
 }
 
 // Calling a function can take two forms:
 //
-// 1. On an object: `object.name(...)`.
-// 2. On a variable: `name(...)`.
-//
-// This will impact the value of `this`.
+// 1. On an object: `object.name(...)`. `this` will be set to `object`.
+// 2. On a variable: `name(...)`. `this` will be set to the `root` object.
 
 nodes.CallNode.prototype.eval = function(scope) {
   if (this.objectNode) { // object.name(...)
     var object = this.objectNode.eval(scope);
-    var property = object.get(this.name);
+    var theFunction = object.get(this.name);
   } else { // name()
     var object = runtime.root;
-    var property = scope.get(this.name);
+    var theFunction = scope.get(this.name);
   }
-  
+
   var args = this.argumentNodes.map(function(arg) { return arg.eval(scope) });
 
-  if (!property || !property.call) throw this.name + " is not a function";
+  if (!theFunction || !theFunction.call) throw this.name + " is not a function";
 
-  return property.call(object, scope, args) || runtime.undefined;
+  return theFunction.call(object, scope, args) || runtime.undefined;
 }

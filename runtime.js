@@ -19,6 +19,7 @@ var util = require("util");
 // will be an instance of `JsObject`.
 // 
 // If we want to create a number in our runtime, we do: `new JsObject(4)`.
+
 function JsObject(value) {
   this.properties = {};
   this.value = value; // A JavaScipt string or number.
@@ -44,6 +45,7 @@ JsObject.prototype.set = function(name, value) {
 //
 // Scopes also have a parent scope. The chain of parents will go down to the root scope,
 // where you define your global variables.
+
 function JsScope(_this, parent) {
   this.locals = {};     // local variables
   this.this = _this;    // value of `this`
@@ -61,6 +63,7 @@ JsScope.prototype.hasLocal = function(name) {
 // This is how you get access to variables defined in parent functions,
 // also why defining a variable in a function will override the variables of parent
 // functions and global variables.
+
 JsScope.prototype.get = function(name) {
   if (this.hasLocal(name)) return this.locals[name]; // Look in current scope
   if (this.parent) return this.parent.get(name); // Look in parent scope
@@ -74,16 +77,19 @@ JsScope.prototype.get = function(name) {
 // This is why, in JavaScript, if you assign a value to a variable without declaring it first
 // (using `var`), it will search in parent scopes until it reaches the root scope and
 // declare it there, thus declaring it as a global variable.
+
 JsScope.prototype.set = function(name, value) {
   if (this.root || this.hasLocal(name)) return this.locals[name] = value;
   return this.parent.set(name, value);
 }
 
 
-// ## Function
+// ## Functions
+//
 // Functions encapsulate a body (block of code) that we can execute (eval), and also parameters:
 // `function (parameters) { body }`.
-function JsFunction(body, parameters) {
+
+function JsFunction(parameters, body) {
   JsObject.call(this);
   this.body = body;
   this.parameters = parameters;
@@ -99,6 +105,7 @@ exports.JsFunction = JsFunction;
 // - eval.js defines how each node is evaluated.
 //
 // To execute the function, we `eval` its body.
+
 JsFunction.prototype.call = function(object, scope, args) {
   var functionScope = new JsScope(object, scope); // this = object, parent scope = scope
 
@@ -113,10 +120,11 @@ JsFunction.prototype.call = function(object, scope, args) {
 
 // ## Primitives
 //
-// We map the primitives to their JavaScript conteirparts (in their `value` property).
-// Note that, normally, true and false would be objects.
-exports.true = { value: true };
-exports.false = { value: false };
+// We map the primitives to their JavaScript counterparts (in their `value` property).
+// Note that `true` and `false` are objects, but `null` and `undefined` are not..
+
+exports.true = new JsObject(true);
+exports.false = new JsObject(false);
 exports.null = { value: null };
 exports.undefined = { value: undefined };
 
@@ -135,17 +143,20 @@ root.this = root; // this == root when inside the root scope.
 
 // Properties of the root/global scope are also the local variables. That's why when you
 // use `var a = 1;` in the root scope, it will also assign the value to `root.a`.
+
 root.properties = root.locals;
 
 // Here we'd normaly define all the fancy things, like global funtions and objects, that you
 // have access to inside your JavaScript programs. But we're keeping it simple and only define
 // `root` and the `console.log` function.
+
 root.locals['root'] = root;
 root.locals['console'] = new JsObject();
 
 // We can pass real JavaScript functions in our runtime objects since they have a `call`
 // property too, like `JsFunction.prototype.call`. So they will behave much like `JsFunction`, but
 // without the need to create a scope.
+
 root.locals['console'].properties['log'] = function(scope, args) {
   console.log.apply(console, args.map(function(arg) { return arg.value }));
 }

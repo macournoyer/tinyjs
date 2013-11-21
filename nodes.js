@@ -23,7 +23,7 @@ exports.SetVariableNode = function SetVariableNode(name, valueNode) {
   this.name = name;
   this.valueNode = valueNode;
 }
-exports.DeclareVariableNode = function SetVariableNode(name, valueNode) {
+exports.DeclareVariableNode = function DeclareVariableNode(name, valueNode) {
   this.name = name;
   this.valueNode = valueNode;
 }

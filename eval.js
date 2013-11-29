@@ -20,9 +20,10 @@ var runtime = require('./runtime');
 
 nodes.BlockNode.prototype.eval = function(scope) {
   try {
-    this.nodes.forEach(function(node) {
-      node.eval(scope);
-    });
+    // Hoist declarations
+    this.nodes.forEach(function(node) { if (node.declare) node.declare(scope) });
+    // Eval after
+    this.nodes.forEach(function(node) { if (node.eval) node.eval(scope) });
   } catch (e) {
     if (e instanceof Return) {
       return e.value;
@@ -56,8 +57,11 @@ nodes.NumberNode.prototype.eval = function(scope) { return new runtime.JsObject(
 // Variables are stored in the current scope. All we need to do to interpret the variable nodes is
 // get and set values in the scope.
 
+nodes.DeclareVariableNode.prototype.declare = function(scope) {
+  scope.locals[this.name] = runtime.undefined;
+}
 nodes.DeclareVariableNode.prototype.eval = function(scope) {
-  return scope.locals[this.name] = this.valueNode ? this.valueNode.eval(scope) : runtime.undefined;
+  if (this.valueNode) scope.locals[this.name] = this.valueNode.eval(scope);
 }
 
 nodes.GetVariableNode.prototype.eval = function(scope) {

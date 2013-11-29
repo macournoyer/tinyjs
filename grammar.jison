@@ -54,6 +54,7 @@ terminator:
 statement:
   expression
 | variableDeclaration 
+| return
 ;
 
 // Expressions, as opposed to statements, return a value and can be nested inside
@@ -118,4 +119,9 @@ parameters:
   IDENTIFIER                   { $$ = [ $1 ]; }
 | parameters "," IDENTIFIER    { $1.push($3); $$ = $1 }
 |                              { $$ = []; }
+;
+
+return:
+  RETURN                       { $$ = new nodes.ReturnNode() }
+| RETURN expression            { $$ = new nodes.ReturnNode($2) }
 ;

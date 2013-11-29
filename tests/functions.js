@@ -4,8 +4,11 @@ a.x = "object";
 x = "global";
 
 // Create a function referencing property `x`.
-f = function() { console.log(this.x) }
+f = function() {
+  return this.x;
+  console.log("unreachable");
+}
 a.f = f;
 
-a.f(); // => "object"
-f(); // => "global"
+console.log(a.f()); // => "object"
+console.log(f()); // => "global"

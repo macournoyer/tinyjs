@@ -11,13 +11,15 @@
 \n+                   return 'NEWLINE';
 \s+                   // skip other whitespace
 
-// Literals: the hardcoded values in your programs.
+// Literals: the hard-coded values in your programs.
 [0-9]+\b              return 'NUMBER';
 \"[^"]*\"             return 'STRING';
 \'[^']*\'             return 'STRING';
 
 // Keywords
 "function"            return 'FUNCTION';
+"return"              return 'RETURN';
+"new"                 return 'NEW';
 "var"                 return 'VAR'
 "this"                return 'THIS';
 "true"                return 'TRUE';

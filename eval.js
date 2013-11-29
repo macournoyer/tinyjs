@@ -19,9 +19,23 @@ var runtime = require('./runtime');
 // `eval` to each of its children.
 
 nodes.BlockNode.prototype.eval = function(scope) {
-  this.nodes.forEach(function(node) {
-    node.eval(scope);
-  });
+  try {
+    this.nodes.forEach(function(node) {
+      node.eval(scope);
+    });
+  } catch (e) {
+    if (e instanceof Return) {
+      return e.value;
+    } else {
+      throw e;
+    }
+  }
+}
+
+function Return(value) { this.value = value; }
+
+nodes.ReturnNode.prototype.eval = function(scope) {
+  throw new Return(this.valueNode ? this.valueNode.eval(scope) : runtime.undefined);
 }
 
 // Literals are pretty easy to eval. Simply return the runtime value.
@@ -97,5 +111,5 @@ nodes.CallNode.prototype.eval = function(scope) {
 
   if (!theFunction || !theFunction.call) throw this.name + " is not a function";
 
-  return theFunction.call(object, scope, args) || runtime.undefined;
+  return theFunction.call(object, scope, args);
 }

@@ -114,7 +114,7 @@ JsFunction.prototype.call = function(object, scope, args) {
     functionScope.locals[this.parameters[i]] = args[i];
   }
 
-  this.body.eval(functionScope);
+  return this.body.eval(functionScope);
 }
 
 
@@ -159,6 +159,7 @@ root.locals['console'] = new JsObject();
 
 root.locals['console'].properties['log'] = function(scope, args) {
   console.log.apply(console, args.map(function(arg) { return arg.value }));
+  return exports.undefined;
 }
 
 // Now that's less than 60 lines of code and we have enought of a runtime to execute a lot of JavaScript!

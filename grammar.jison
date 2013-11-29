@@ -65,6 +65,7 @@ expression:
 | property
 | call
 | function
+| new
 ;
 
 // Literals are the hard-coded values in our program.
@@ -124,4 +125,8 @@ parameters:
 return:
   RETURN                       { $$ = new nodes.ReturnNode() }
 | RETURN expression            { $$ = new nodes.ReturnNode($2) }
+;
+
+new:
+  NEW IDENTIFIER "(" arguments ")" { $$ = new nodes.NewNode($2, $4); }
 ;

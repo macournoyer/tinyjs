@@ -1,7 +1,5 @@
-# Things not support by tiny.js
-- inheritance (proto)
-- new
+# Things not supported by tiny.js
 - Operators: ==, ===, +, -, /, etc.
 - if, while, for
 - Named functions
-- Everything else ...
+- A bunch more things ...

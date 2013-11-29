@@ -65,9 +65,7 @@ nodes.DeclareVariableNode.prototype.eval = function(scope) {
 }
 
 nodes.GetVariableNode.prototype.eval = function(scope) {
-  var value = scope.get(this.name);
-  if (typeof value === "undefined") throw this.name + " is not defined";
-  return value;
+  return scope.get(this.name);
 }
 
 nodes.SetVariableNode.prototype.eval = function(scope) {
@@ -113,7 +111,12 @@ nodes.CallNode.prototype.eval = function(scope) {
 
   var args = this.argumentNodes.map(function(arg) { return arg.eval(scope) });
 
-  if (!theFunction || !theFunction.call) throw this.name + " is not a function";
-
   return theFunction.call(object, scope, args);
+}
+
+nodes.NewNode.prototype.eval = function(scope) {
+  var constructor = scope.get(this.name);
+  var args = this.argumentNodes.map(function(arg) { return arg.eval(scope) });
+
+  return constructor.new(scope, args);
 }

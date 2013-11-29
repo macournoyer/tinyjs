@@ -52,3 +52,8 @@ exports.FunctionNode = function FunctionNode(parameters, bodyNode) {
 exports.ReturnNode = function ReturnNode(valueNode) {
   this.valueNode = valueNode;
 }
+
+exports.NewNode = function NewNode(name, argumentNodes) {
+  this.name = name;
+  this.argumentNodes = argumentNodes;
+}

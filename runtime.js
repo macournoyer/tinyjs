@@ -26,8 +26,13 @@ function JsObject(value) {
 }
 exports.JsObject = JsObject;
 
+JsObject.prototype.hasProperty = function(name) {
+  return this.properties.hasOwnProperty(name);
+}
+
 JsObject.prototype.get = function(name) {
-  return this.properties[name];
+  if (this.hasProperty(name)) return this.properties[name];
+  if (this.hasProperty('__tinyProto__')) return this.properties['__tinyProto__'].get(name);
 }
 JsObject.prototype.set = function(name, value) {
   return this.properties[name] = value;
@@ -59,7 +64,7 @@ JsScope.prototype.hasLocal = function(name) {
 }
 
 // Getting the value in a variable is done by looking first in the current scope,
-// then recurcively going in the parent until we reach the root scope.
+// then recursively going in the parent until we reach the root scope.
 // This is how you get access to variables defined in parent functions,
 // also why defining a variable in a function will override the variables of parent
 // functions and global variables.
@@ -67,6 +72,7 @@ JsScope.prototype.hasLocal = function(name) {
 JsScope.prototype.get = function(name) {
   if (this.hasLocal(name)) return this.locals[name]; // Look in current scope
   if (this.parent) return this.parent.get(name); // Look in parent scope
+  throw this.name + " is not defined";
 }
 
 // Setting the value of a variables follows the same logic as when getting it's value.
@@ -93,6 +99,7 @@ function JsFunction(parameters, body) {
   JsObject.call(this);
   this.body = body;
   this.parameters = parameters;
+  this.properties['prototype'] = new JsObject();
 }
 util.inherits(JsFunction, JsObject); // Functions are objects.
 exports.JsFunction = JsFunction;
@@ -117,6 +124,16 @@ JsFunction.prototype.call = function(object, scope, args) {
   return this.body.eval(functionScope);
 }
 
+// Creating an instance
+
+JsFunction.prototype.new = function(scope, args) {
+  var object = new JsObject();
+  object.properties['constructor'] = this;
+  object.properties['__tinyProto__'] = this.properties['prototype'];
+  this.call(object, scope, args);
+  return object;
+}
+
 
 // ## Primitives
 //
@@ -138,13 +155,13 @@ exports.undefined = { value: undefined };
 // 
 // Thus, we create it as a scope that also acts as an object (has properties).
 
-var root = exports.root = new JsScope();
+var root = exports.root = new JsObject();
 root.this = root; // this == root when inside the root scope.
 
 // Properties of the root/global scope are also the local variables. That's why when you
 // use `var a = 1;` in the root scope, it will also assign the value to `root.a`.
 
-root.properties = root.locals;
+root.locals = root.properties;
 
 // Here we'd normaly define all the fancy things, like global funtions and objects, that you
 // have access to inside your JavaScript programs. But we're keeping it simple and only define
@@ -162,4 +179,4 @@ root.locals['console'].properties['log'] = function(scope, args) {
   return exports.undefined;
 }
 
-// Now that's less than 60 lines of code and we have enought of a runtime to execute a lot of JavaScript!
+// Now that's less than 60 lines of code and we have enough of a runtime to execute a lot of JavaScript!

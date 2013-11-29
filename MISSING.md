@@ -1,4 +1,5 @@
 # Things not support by tiny.js
+- inheritance (proto)
 - Operators: ==, ===, +, -, /, etc.
 - new
 - return

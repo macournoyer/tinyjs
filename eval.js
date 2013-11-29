@@ -32,7 +32,7 @@ nodes.FalseNode.prototype.eval     = function(scope) { return runtime.false; }
 nodes.NullNode.prototype.eval      = function(scope) { return runtime.null; }
 nodes.UndefinedNode.prototype.eval = function(scope) { return runtime.undefined; }
 
-// Creating various objects is done by instanciating `JsObject`.
+// Creating various objects is done by instantiating `JsObject`.
 
 nodes.ObjectNode.prototype.eval = function(scope) { return new runtime.JsObject(); }
 nodes.StringNode.prototype.eval = function(scope) { return new runtime.JsObject(this.value); }
@@ -73,7 +73,7 @@ nodes.SetPropertyNode.prototype.eval = function(scope) {
 }
 
 
-// Creating a function is just a matter of instanciating `JsFunction`.
+// Creating a function is just a matter of instantiating `JsFunction`.
 
 nodes.FunctionNode.prototype.eval = function(scope) {
   return new runtime.JsFunction(this.parameters, this.bodyNode);

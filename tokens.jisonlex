@@ -30,6 +30,12 @@
 // Identifiers are names: variable and function names.
 [a-zA-Z_]\w*          return 'IDENTIFIER';
 
+// Operators
+"==="                 return '===';
+"!=="                 return '!==';
+"&&"                  return '&&';
+"||"                  return '||';
+
 // We end with a catch all rule. Any one single character that has not been matched
 // will be handled here. A few examples: `.`, `+`, `(` and `)`.
 .                     return yytext;

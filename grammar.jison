@@ -13,10 +13,18 @@
 // ## The operator precedence table.
 // We only define a few operators. But normally, this is where you'd defined all the
 // operators in the language.
-%left ","
-%right "="
-%nonassoc "(" ")"
-%left "."
+// Based on [MDN Operator Precedence table](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_Precedence).
+%left  ','
+%right '='
+%left  '||'
+%left  '&&'
+%left  '==' '!=' '===' '!=='
+%left  '>' '>=' '<' '<='
+%left  '+' '-'
+%left  '*' '/'
+%right '!'
+%right NEW
+%left  '.'
 
 // ## Defining the rules
 // This is where we define all the parsing rules.
@@ -64,8 +72,10 @@ expression:
 | variable
 | property
 | call
+| operator
 | function
 | new
+| '(' expression ')'
 ;
 
 // Literals are the hard-coded values in our program.
@@ -109,6 +119,11 @@ arguments:
   expression                   { $$ = [ $1 ]; }
 | arguments "," expression     { $1.push($3); $$ = $1 }
 |                              { $$ = []; }
+;
+
+operator:
+  expression '+' expression    { $$ = new nodes.AddNode($1, $3) }
+| expression '*' expression    { $$ = new nodes.MultiplyNode($1, $3) }
 ;
 
 function:

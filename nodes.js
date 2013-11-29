@@ -57,3 +57,13 @@ exports.NewNode = function NewNode(name, argumentNodes) {
   this.name = name;
   this.argumentNodes = argumentNodes;
 }
+
+exports.AddNode = function AddNode(node1, node2) {
+  this.node1 = node1;
+  this.node2 = node2;
+}
+
+exports.MultiplyNode = function MultiplyNode(node1, node2) {
+  this.node1 = node1;
+  this.node2 = node2;
+}

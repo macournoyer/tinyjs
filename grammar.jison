@@ -2,17 +2,11 @@
 //
 // This grammar will be used to generate the parser (parser.js). It will turn the stream of
 // tokens (defined in tokens.jisonlex) into a tree of nodes (defined in nodes.js).
-//
-// Note that our parser will be a lot more loose than real JavaScript. Being more strict,
-// to catch errors at parse time, requires more rules and a more complex grammar.
 
 %{
   var nodes = require('./nodes');
 %}
 
-// ## The operator precedence table.
-// We only define a few operators. But normally, this is where you'd defined all the
-// operators in the language.
 // Based on [MDN Operator Precedence table](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_Precedence).
 %left  ','
 %right '='
@@ -26,13 +20,6 @@
 %right NEW
 %left  '.'
 
-// ## Defining the rules
-// This is where we define all the parsing rules.
-// The format is as follow: `ruleName: TOKEN orOtherRule | OTHER_TOKEN | ... ;`
-// What we put in the `{ }` is what needs to be executed when the rule matches.
-// We must assign to `$$` the node created by the rule.
-// You can reference matched tokens using `$1` .. `$x`.
-
 %start program  // Tell which rule to start with.
 
 %%
@@ -42,14 +29,10 @@ program:
   statements EOF              { return $1; }
 ;
 
-// A series of statements can be multiple things:
-// - One single statements,
-// - several ones, seperated by a `;`.
-//
-// We also need to handle edge cases, like trailing `;` and empty list of statements.
 statements:
   statement                        { $$ = new nodes.BlockNode([ $1 ]); }
-| statements terminator statement  { $1.push($3); $$ = $1; }
+| statements terminator statement  { $1.push($3); // statements ($1) is a BlockNode
+                                     $$ = $1; }
 | statements terminator            { $$ = $1; }
 |                                  { $$ = new nodes.BlockNode([]); }
 ;
@@ -75,7 +58,7 @@ expression:
 | operator
 | function
 | new
-| '(' expression ')'
+| '(' expression ')'           { $$ = $2; }
 ;
 
 // Literals are the hard-coded values in our program.
@@ -137,11 +120,12 @@ parameters:
 |                              { $$ = []; }
 ;
 
+new:
+  NEW IDENTIFIER "(" arguments ")" { $$ = new nodes.NewNode($2, $4); }
+;
+
 return:
   RETURN                       { $$ = new nodes.ReturnNode() }
 | RETURN expression            { $$ = new nodes.ReturnNode($2) }
 ;
 
-new:
-  NEW IDENTIFIER "(" arguments ")" { $$ = new nodes.NewNode($2, $4); }
-;

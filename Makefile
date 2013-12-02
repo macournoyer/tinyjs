@@ -8,7 +8,4 @@ size: tokens.jisonlex grammar.jison nodes.js eval.js runtime.js tiny.js
 	@echo "     LOC   BYTES"
 	@egrep -v "^[[:space:]]*(\/\/.*)?$$" $^ | wc -c -l
 
-doc: tokens.jisonlex grammar.jison nodes.js eval.js runtime.js tiny.js
-	docco -e .js $^
-
 .PHONY: test size doc

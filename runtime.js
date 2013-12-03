@@ -169,7 +169,7 @@ root.locals = root.properties;
 
 // Here we'd normaly define all the fancy things, like global funtions and objects, that you
 // have access to inside your JavaScript programs. But we're keeping it simple and only define
-// `root` and the `console.log` function.
+// `root`, the `console.log` and `alert` functions.
 
 root.locals['root'] = root;
 root.locals['console'] = new JsObject();
@@ -180,6 +180,11 @@ root.locals['console'] = new JsObject();
 
 root.locals['console'].properties['log'] = function(scope, args) {
   console.log.apply(console, args.map(function(arg) { return arg.value }));
+  return exports.undefined;
+}
+
+root.locals['alert'] = function(scope, args) {
+  alert.apply(null, args.map(function(arg) { return arg.value }));
   return exports.undefined;
 }
 

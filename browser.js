@@ -3,9 +3,13 @@
 
 var parser = require('./parser').parser;
 var eval = require('./eval');
+var nodes = require('./nodes');
 var runtime = require('./runtime');
 
 window.tinyjs = {
+  nodes: nodes,
+  runtime: runtime,
+
   lex: function(code) {
     var lexer = parser.lexer;
     var terminals = parser.terminals_;

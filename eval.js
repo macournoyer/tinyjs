@@ -6,11 +6,6 @@
 // We'll add an `eval` function to each node produced by the parser. Each node will know how to
 // evaluate itself. For example, a `StringNode` will know how to turn itself into a real string
 // inside our runtime.
-//
-// One thing our interpreter does not support is variable declaration hoisting. In JavaScript,
-// variable declarations are moved (hoisted) invisibly to the top of their scope. This would
-// require two passes in the node tree by the interpreter, a first one for declaring and one
-// last one for evaluating.
 
 var nodes = require('./nodes');
 var runtime = require('./runtime');
@@ -23,7 +18,7 @@ nodes.BlockNode.prototype.eval = function(scope) {
     // Hoist declarations
     this.nodes.forEach(function(node) { if (node.declare) node.declare(scope) });
     // Eval after
-    this.nodes.forEach(function(node) { if (node.eval) node.eval(scope) });
+    this.nodes.forEach(function(node) { node.eval(scope) });
   } catch (e) {
     if (e instanceof Return) {
       return e.value;

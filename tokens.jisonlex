@@ -15,13 +15,13 @@
 [0-9]+\b              return 'NUMBER';
 \"[^"]*\"             return 'STRING';
 \'[^']*\'             return 'STRING';
-"this"                return 'THIS';
 "true"                return 'TRUE';
 "false"               return 'FALSE';
 "null"                return 'NULL';
 "undefined"           return 'UNDEFINED';
 
 // Keywords
+"this"                return 'THIS';
 "function"            return 'FUNCTION';
 "return"              return 'RETURN';
 "var"                 return 'VAR'

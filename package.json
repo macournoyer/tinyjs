@@ -1,0 +1,27 @@
+{
+  "name": "tinyjs",
+  "version": "0.0.1",
+  "description": "A tiny JavaScript in JavaScript",
+  "main": "tiny.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/codedinc/tinyjs.git"
+  },
+  "keywords": [
+    "interpreter",
+    "parser"
+  ],
+  "author": "Marc-Andre Cournoyer",
+  "bugs": {
+    "url": "https://github.com/codedinc/tinyjs/issues"
+  },
+  "dependencies": {
+    "jison": "0.4.x"
+  }
+}

@@ -15,17 +15,17 @@
 [0-9]+\b              return 'NUMBER';
 \"[^"]*\"             return 'STRING';
 \'[^']*\'             return 'STRING';
-
-// Keywords
-"function"            return 'FUNCTION';
-"return"              return 'RETURN';
-"new"                 return 'NEW';
-"var"                 return 'VAR'
 "this"                return 'THIS';
 "true"                return 'TRUE';
 "false"               return 'FALSE';
 "null"                return 'NULL';
 "undefined"           return 'UNDEFINED';
+
+// Keywords
+"function"            return 'FUNCTION';
+"return"              return 'RETURN';
+"var"                 return 'VAR'
+"new"                 return 'NEW';
 
 // Identifiers are names: variable and function names.
 [a-zA-Z_]\w*          return 'IDENTIFIER';

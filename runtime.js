@@ -129,7 +129,6 @@ JsFunction.prototype.call = function(object, scope, args) {
 JsFunction.prototype.new = function(scope, args) {
   var object = new JsObject();
   
-  object.properties['constructor'] = this;
   // We can't use __proto__ to not override the real JavaScript property.
   object.properties['__tinyProto__'] = this.properties['prototype'];
   

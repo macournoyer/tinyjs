@@ -1,6 +1,8 @@
 // # Putting it all together
 //
 // All the pieces of our language are put together here.
+//
+// usage: node tiny.js samples/functions.js
 
 var parser = require('./parser').parser;
 var eval = require('./eval');

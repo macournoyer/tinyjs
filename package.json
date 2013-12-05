@@ -3,9 +3,6 @@
   "version": "0.0.1",
   "description": "A tiny JavaScript in JavaScript",
   "main": "tiny.js",
-  "directories": {
-    "test": "tests"
-  },
   "scripts": {
     "test": "make test"
   },
@@ -22,6 +19,7 @@
     "url": "https://github.com/codedinc/tinyjs/issues"
   },
   "dependencies": {
-    "jison": "0.4.x"
+    "jison": "0.4.x",
+    "mocha": "1.x"
   }
 }

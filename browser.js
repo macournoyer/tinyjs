@@ -1,8 +1,9 @@
-// Enable to used in the browser.
-// Compile requires using: $ browserify browser.js -o bundle.js
+// Expose TinyJs to be used in the browser.
+// Bundle requires using: $ browserify browser.js -o bundle.js
 
 var parser = require('./parser').parser;
 var simpleParser = require('./demos/simple_parser').parser;
+var lexer = require('./lexer');
 var eval = require('./eval');
 var nodes = require('./nodes');
 var runtime = require('./runtime');
@@ -14,21 +15,7 @@ window.tinyjs = {
   parser: parser,
   simpleParser: simpleParser,
 
-  lexer: {
-    lex: function(code) {
-      var lexer = parser.lexer;
-      var terminals = parser.terminals_;
-      var token, tokens = [];
-
-      lexer.setInput(code);
-
-      while ((token = lexer.lex()) !== 1) {
-        tokens.push([terminals[token] || token, lexer.yytext]);
-      }
-
-      return tokens;
-    }
-  },
+  lexer: lexer,
 
   eval: function(code) {
     node = parser.parse(code);

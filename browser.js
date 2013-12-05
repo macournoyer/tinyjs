@@ -2,6 +2,7 @@
 // Compile requires using: $ browserify browser.js -o bundle.js
 
 var parser = require('./parser').parser;
+var simpleParser = require('./demos/simple_parser').parser;
 var eval = require('./eval');
 var nodes = require('./nodes');
 var runtime = require('./runtime');
@@ -9,23 +10,24 @@ var runtime = require('./runtime');
 window.tinyjs = {
   nodes: nodes,
   runtime: runtime,
+  
+  parser: parser,
+  simpleParser: simpleParser,
 
-  lex: function(code) {
-    var lexer = parser.lexer;
-    var terminals = parser.terminals_;
-    var token, tokens = [];
+  lexer: {
+    lex: function(code) {
+      var lexer = parser.lexer;
+      var terminals = parser.terminals_;
+      var token, tokens = [];
 
-    lexer.setInput(code);
+      lexer.setInput(code);
 
-    while ((token = lexer.lex()) !== 1) {
-      tokens.push([terminals[token] || token, lexer.yytext]);
+      while ((token = lexer.lex()) !== 1) {
+        tokens.push([terminals[token] || token, lexer.yytext]);
+      }
+
+      return tokens;
     }
-
-    return tokens;
-  },
-
-  parse: function(code) {
-    return parser.parse(code);
   },
 
   eval: function(code) {

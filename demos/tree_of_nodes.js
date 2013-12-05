@@ -1,6 +1,6 @@
-var nodes = require('./nodes'),
-    runtime = require('./runtime');
-    eval = require('./eval');
+var nodes = require('../nodes'),
+    runtime = require('../runtime'),
+    eval = require('../eval');
 
 // The following is the three of nodes for `var s = "hi!"; console.log(s);`.
 // This is what the parser does, it reads your program and spits out a tree of nodes.

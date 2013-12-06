@@ -18,7 +18,7 @@
 %left  '*' '/'
 %right '!'
 %right NEW
-%left  '.'
+%right '.'
 
 %start program  // Tell which rule to start with.
 

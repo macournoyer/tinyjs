@@ -36,12 +36,22 @@ describe('Parser', function() {
     , parser.parse("a = 1"))
   })
   
-  it('parses property assignment', function() {
+  it('parses property', function() {
     assert.deepEqual(
       new nodes.BlockNode([
-        new nodes.SetPropertyNode(new nodes.ThisNode, "a", new nodes.NumberNode(1))
+        new nodes.SetPropertyNode(
+          new nodes.ThisNode(),
+          "a",
+          new nodes.GetPropertyNode(
+            new nodes.GetPropertyNode(
+              new nodes.GetVariableNode("b"),
+              "x"
+            ),
+            "y"
+          )
+        )
       ])
-    , parser.parse("this.a = 1"))
+    , parser.parse("this.a = b.x.y"))
   })
 
   it('parses call', function() {

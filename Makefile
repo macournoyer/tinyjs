@@ -16,7 +16,7 @@ demos/simple_parser.js: demos/simple_grammar.jison tokens.jisonlex
 
 test: parser.js
 	${MOCHA}
-	@for f in samples/*.js; do sh scripts/test.sh $$f; done
+	@for f in samples/*.js; do sh scripts/compare_outputs.sh $$f; done
 
 test-lexer: parser.js
 	${MOCHA} test/lexer_test.js

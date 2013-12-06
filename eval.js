@@ -45,7 +45,7 @@ nodes.UndefinedNode.prototype.eval = function(scope) { return runtime.undefined;
 // Creating various objects is done by instantiating `JsObject`.
 
 nodes.ObjectNode.prototype.eval = function(scope) { return new runtime.JsObject(); }
-nodes.StringNode.prototype.eval = function(scope) { return new runtime.JsObject(this.value); }
+nodes.StringNode.prototype.eval =
 nodes.NumberNode.prototype.eval = function(scope) { return new runtime.JsObject(this.value); }
 
 

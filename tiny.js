@@ -15,7 +15,7 @@ var code = fs.readFileSync(file, "utf8");
 
 // We then feed the code to the parser. Which will turn our code into
 // a tree of nodes.
-node = parser.parse(code);
+var node = parser.parse(code);
 
 // Finally, start the evaluation of our program on the top of the tree,
 // passing the root (global) object as the scope in which to start its execution.

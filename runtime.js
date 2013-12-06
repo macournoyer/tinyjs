@@ -188,4 +188,4 @@ root.locals['alert'] = function(scope, args) {
   return exports.undefined;
 }
 
-// Now that's less than 60 lines of code and we have enough of a runtime to execute a lot of JavaScript!
+root.locals['potato'] = new JsObject();

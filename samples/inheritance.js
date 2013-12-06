@@ -1,7 +1,8 @@
 var Parent = function() {}
 var Child = function() {}
 
-Child.prototype.__tinyProto__ = Parent.prototype;
+// Inherit from Parent
+Child.prototype = new Parent();
 
 Parent.prototype.parentProperty = "in parent";
 Child.prototype.childProperty = "in child";

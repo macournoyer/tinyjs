@@ -111,12 +111,8 @@ nodes.CallNode.prototype.eval = function(scope) {
 
 // Creating an instance is done by looking up the constructor function in the current scope
 // and calling it.
-
 nodes.NewNode.prototype.eval = function(scope) {
-  var constructor = scope.get(this.name);
-  var args = this.argumentNodes.map(function(arg) { return arg.eval(scope) });
-
-  return constructor.new(scope, args);
+  // Exercise: implement this ...
 }
 
 

@@ -57,7 +57,6 @@ expression:
 | call
 | operator
 | function
-| new
 | '(' expression ')'           { $$ = $2; }
 ;
 
@@ -118,10 +117,6 @@ parameters:
   IDENTIFIER                   { $$ = [ $1 ]; }
 | parameters "," IDENTIFIER    { $1.push($3); $$ = $1 }
 |                              { $$ = []; }
-;
-
-new:
-  NEW IDENTIFIER "(" arguments ")" { $$ = new nodes.NewNode($2, $4); }
 ;
 
 return:

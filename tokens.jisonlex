@@ -25,7 +25,6 @@
 "function"            return 'FUNCTION';
 "return"              return 'RETURN';
 "var"                 return 'VAR'
-"new"                 return 'NEW';
 
 // Identifiers are names: variable and function names.
 [a-zA-Z_]\w*          return 'IDENTIFIER';

@@ -4,7 +4,7 @@ a.x = "object";
 x = "global";
 
 // Create a function referencing property `x`.
-f = function() {
+var f = function() {
   return this.x;
   console.log("unreachable");
 }
